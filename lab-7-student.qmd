@@ -109,22 +109,22 @@ reproducible.
 -   Cite any external sources you use to solve the mystery. \>cheat
     sheets
 
-### Security Footage Witness Information
+### Security Footage Witnesses
 ```{r}
 #| label: information on witnesses 
 
-#the last house on \"Northwestern Dr\
+
 
 suspect_list <- bind_rows(
-  person |>
+  person |> #the last house on \"Northwestern Dr\
     filter(address_street_name == "Northwestern Dr")|>#all the rows showing the Northwestern Dr street
     arrange(desc(address_number))|>#go from largest to smallest adress number for the "last house on the street"
-    slice_head()|>
-    mutate(description = "witness"),
-  person|>
-    filter(str_extract(name, "^[^ ]+") == "Annabel", 
-           address_street_name == "Franklin Ave")|>
-    mutate(description = "witness")
+    slice_head()|> #add the first row (last house)
+    mutate(description = "witness"),#when adding this person to suspect_list create description column name them as witness
+  person|> #Annabel on Franklin Ave
+    filter(str_extract(name, "^[^ ]+") == "Annabel",#stringr start of the "string" then grab characters before two spaces,keeps only rows "Annabel"
+           address_street_name == "Franklin Ave")|> # keep only rows with Annabel and Franklin Ave
+    mutate(description = "witness")#when adding this person to suspect_list in description column name them as witness
 )
 
 suspect_list
@@ -133,7 +133,7 @@ suspect_list
 I found the syntax for [extracting after the fist
 name](https://stackoverflow.com/questions/26489276/separate-name-into-firstname-and-lastname-columns-of-data-frame)
 
-### What did Witnesses say during the Police Interviews
+## Witnesses say during the Police Interviews
 
 ```{r}
 #| label: police interviews
@@ -141,44 +141,86 @@ interview|>
   filter(person_id %in% c(14887, 16371))|>
   pull(transcript)
 ```
-### Who fits Police interview Descriptions
-
+## Who fits Police interview Descriptions
+#### Morty's(14887) suspect description
 ```{r}
-# Morty's(14887) suspect description
+#| label: Morty's(14887) suspect description
 
 #get fit members matching witness descriptions of who ran out 
-filter(get_fit_now_member,str_starts(id, "48Z") & membership_status == "gold")
+filter(get_fit_now_member,
+       str_starts(id, "48Z") & 
+        membership_status == "gold")
 
-#who has a license with H42W
-filter(drivers_license,str_detect(plate_number, "H42W"))
+#who has a license corresponding to plate H42W
+filter(drivers_license,
+       str_detect(plate_number, "H42W"))
 
-#whose license matches the owners of the car that was seen 
-filter(person, license_id %in% c(183779,423327,664760))
+#person whose license matches the owners of the car that was seen 
+filter(person, 
+       license_id %in% c(183779,423327,664760))
 
 # person described having run out was Jeremy Bowers added to suspect_list
 suspect_list <- bind_rows(
   suspect_list,
-  person |> filter(id == 67318)|>
+  person |> 
+    filter(id == 67318)|>
   mutate(description = "witness ID"))
 
+```
+#### Annabel's (16371)suspect possibilities
+```{r}
+#| label: Annabel's suspect possiblities
+#| output: false
+#people that went to the gym on  January 9th
+filter(get_fit_now_check_in, 
+       check_in_date == '20180109')
 
-# was Morty (14887) at the gym Facebook events on '20180115'aka January 15, 2018, and gym check in
+#create a group with the members there on the 9th 
+get_fit_now_member |>
+  filter(id %in% (get_fit_now_check_in |>
+      filter(check_in_date == '20180109') |> #only those from the check in data frame that went in the 9th 
+      pull(membership_id)))
 
-#where were witnesses on 
-facebook_event_checkin|>
-  filter(person_id %in% c(14887, 16371))
+#add the people outlined to the suspect list
+suspect_list <- bind_rows (
+  suspect_list,
+  person|>
+    filter(id %in% c(15247,28073,55662,10815,83186,31523,92736,28819,67318,16371))|>
+    filter(!(name %in% suspect_list$name))|> #skip duplicates
+    mutate(description = "@ gym 01/09"))
 
-#both individuals who ran out 
-get_fit_now_check_in|>
-  filter(membership_id %in% c('48Z7A', '48Z55') & 
-           check_in_date =='20180109')
-
-
+#Jermey Bowers was also at the gym  on January 9th add to his discription on the suspect list
+suspect_list <- suspect_list |>
+  mutate(description = if_else(id == 67318, "witness IDed x2", description))
 ```
 
+```{r}
+#| label: suspect list up to this point
+suspect_list
+```
+
+## Add suspect's facebook events on the 15th to the suspect list
+
+```{r}
+#| label: facebook activities
+
+#rename the id variable so are able to join 
+suspect_list <- rename(suspect_list, person_id = id)
+
+#find teh events our subjects attended on the 15th
+suspect_list <- suspect_list|>
+  left_join(facebook_event_checkin|> 
+              filter(date == '20180115'),
+            by = "person_id")|> # person_ids that had no event listed for the 15th apear as NA's 
+  select(-address_number, -address_street_name, -event_id, -ssn)#get rid of variables uneeded
+
+suspect_list
+```
+
+> Since Jeremy Bowers is the only suspect that meets the description given by both witnesses and was at the same event as them on the same date he is the most likely murderer. 
 
 ::: callout-note
 ## And the final suspect is...
 
-*put the name of the person responsible for the murder here.*
+*Jeremy Bowers*
 :::

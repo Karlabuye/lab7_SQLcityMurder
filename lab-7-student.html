@@ -165,24 +165,22 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>Cite any external sources you use to solve the mystery. &gt;cheat sheets</li>
 </ul>
 </section>
-<section id="security-footage-witness-information" class="level3">
-<h3 class="anchored" data-anchor-id="security-footage-witness-information">Security Footage Witness Information</h3>
+<section id="security-footage-witnesses" class="level3">
+<h3 class="anchored" data-anchor-id="security-footage-witnesses">Security Footage Witnesses</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">#the last house on \"Northwestern Dr\</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>suspect_list <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  person <span class="sc">|&gt;</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(address_street_name <span class="sc">==</span> <span class="st">"Northwestern Dr"</span>)<span class="sc">|&gt;</span><span class="co">#all the rows showing the Northwestern Dr street</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">arrange</span>(<span class="fu">desc</span>(address_number))<span class="sc">|&gt;</span><span class="co">#go from largest to smallest adress number for the "last house on the street"</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">slice_head</span>()<span class="sc">|&gt;</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">description =</span> <span class="st">"witness"</span>),</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  person<span class="sc">|&gt;</span></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="fu">str_extract</span>(name, <span class="st">"^[^ ]+"</span>) <span class="sc">==</span> <span class="st">"Annabel"</span>, </span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>           address_street_name <span class="sc">==</span> <span class="st">"Franklin Ave"</span>)<span class="sc">|&gt;</span></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">description =</span> <span class="st">"witness"</span>)</span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>suspect_list</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>suspect_list <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  person <span class="sc">|&gt;</span> <span class="co">#the last house on \"Northwestern Dr\</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(address_street_name <span class="sc">==</span> <span class="st">"Northwestern Dr"</span>)<span class="sc">|&gt;</span><span class="co">#all the rows showing the Northwestern Dr street</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">arrange</span>(<span class="fu">desc</span>(address_number))<span class="sc">|&gt;</span><span class="co">#go from largest to smallest adress number for the "last house on the street"</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">slice_head</span>()<span class="sc">|&gt;</span> <span class="co">#add the first row (last house)</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">description =</span> <span class="st">"witness"</span>),<span class="co">#when adding this person to suspect_list create description column name them as witness</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  person<span class="sc">|&gt;</span> <span class="co">#Annabel on Franklin Ave</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="fu">str_extract</span>(name, <span class="st">"^[^ ]+"</span>) <span class="sc">==</span> <span class="st">"Annabel"</span>,<span class="co">#stringr start of the "string" then grab characters before two spaces,keeps only rows "Annabel"</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>           address_street_name <span class="sc">==</span> <span class="st">"Franklin Ave"</span>)<span class="sc">|&gt;</span> <span class="co"># keep only rows with Annabel and Franklin Ave</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">description =</span> <span class="st">"witness"</span>)<span class="co">#when adding this person to suspect_list in description column name them as witness</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>suspect_list</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 2 × 7
      id name    license_id address_number address_street_name    ssn description
@@ -193,8 +191,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>I found the syntax for <a href="https://stackoverflow.com/questions/26489276/separate-name-into-firstname-and-lastname-columns-of-data-frame">extracting after the fist name</a></p>
 </section>
-<section id="what-did-witnesses-say-during-the-police-interviews" class="level3">
-<h3 class="anchored" data-anchor-id="what-did-witnesses-say-during-the-police-interviews">What did Witnesses say during the Police Interviews</h3>
+</section>
+<section id="witnesses-say-during-the-police-interviews" class="level2">
+<h2 class="anchored" data-anchor-id="witnesses-say-during-the-police-interviews">Witnesses say during the Police Interviews</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>interview<span class="sc">|&gt;</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(person_id <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">14887</span>, <span class="dv">16371</span>))<span class="sc">|&gt;</span></span>
@@ -204,12 +203,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 [2] "I saw the murder happen, and I recognized the killer from my gym when I was working out last week on January the 9th."                                                                                                                </code></pre>
 </div>
 </div>
-<p>###Who fits Police interview Descriptions</p>
+</section>
+<section id="who-fits-police-interview-descriptions" class="level2">
+<h2 class="anchored" data-anchor-id="who-fits-police-interview-descriptions">Who fits Police interview Descriptions</h2>
+<section id="mortys14887-suspect-description" class="level4">
+<h4 class="anchored" data-anchor-id="mortys14887-suspect-description">Morty’s(14887) suspect description</h4>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Morty's(14887) suspect description</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co">#get fit members matching witness descriptions of who ran out </span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(get_fit_now_member,<span class="fu">str_starts</span>(id, <span class="st">"48Z"</span>) <span class="sc">&amp;</span> membership_status <span class="sc">==</span> <span class="st">"gold"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">#get fit members matching witness descriptions of who ran out </span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(get_fit_now_member,</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>       <span class="fu">str_starts</span>(id, <span class="st">"48Z"</span>) <span class="sc">&amp;</span> </span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>        membership_status <span class="sc">==</span> <span class="st">"gold"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 2 × 5
   id    person_id name          membership_start_date membership_status
@@ -217,8 +220,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 1 48Z7A     28819 Joe Germuska               20160305 gold             
 2 48Z55     67318 Jeremy Bowers              20160101 gold             </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">#who has a license with H42W</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(drivers_license,<span class="fu">str_detect</span>(plate_number, <span class="st">"H42W"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">#who has a license corresponding to plate H42W</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(drivers_license,</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>       <span class="fu">str_detect</span>(plate_number, <span class="st">"H42W"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 3 × 9
       id   age height eye_color hair_color gender plate_number car_make 
@@ -228,8 +232,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 3 664760    21     71 black     black      male   4H42WR       Nissan   
 # ℹ 1 more variable: car_model &lt;chr&gt;</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co">#whose license matches the owners of the car that was seen </span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(person, license_id <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">183779</span>,<span class="dv">423327</span>,<span class="dv">664760</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co">#person whose license matches the owners of the car that was seen </span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(person, </span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>       license_id <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">183779</span>,<span class="dv">423327</span>,<span class="dv">664760</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 3 × 6
      id name           license_id address_number address_street_name         ssn
@@ -238,34 +243,94 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 2 67318 Jeremy Bowers      423327            530 Washington Pl, Apt 3A 871539279
 3 78193 Maxine Whitely     183779            110 Fisk Rd               137882671</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># person described having run out was Jeremy Bowers</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="co"># was Morty (14887) at the gym Facebook events on '20180115'aka January 15, 2018, and gym check in</span></span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="co">#where were witnesses on </span></span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>facebook_event_checkin<span class="sc">|&gt;</span></span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(person_id <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">14887</span>, <span class="dv">16371</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># person described having run out was Jeremy Bowers added to suspect_list</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>suspect_list <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  suspect_list,</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  person <span class="sc">|&gt;</span> </span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(id <span class="sc">==</span> <span class="dv">67318</span>)<span class="sc">|&gt;</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">description =</span> <span class="st">"witness ID"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="annabels-16371suspect-possibilities" class="level4">
+<h4 class="anchored" data-anchor-id="annabels-16371suspect-possibilities">Annabel’s (16371)suspect possibilities</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co">#people that went to the gym on  January 9th</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(get_fit_now_check_in, </span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>       check_in_date <span class="sc">==</span> <span class="st">'20180109'</span>)</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="co">#create a group with the members there on the 9th </span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>get_fit_now_member <span class="sc">|&gt;</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(id <span class="sc">%in%</span> (get_fit_now_check_in <span class="sc">|&gt;</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>      <span class="fu">filter</span>(check_in_date <span class="sc">==</span> <span class="st">'20180109'</span>) <span class="sc">|&gt;</span> <span class="co">#only those from the check in data frame that went in the 9th </span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>      <span class="fu">pull</span>(membership_id)))</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="co">#add the people outlined to the suspect list</span></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>suspect_list <span class="ot">&lt;-</span> <span class="fu">bind_rows</span> (</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>  suspect_list,</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>  person<span class="sc">|&gt;</span></span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(id <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">15247</span>,<span class="dv">28073</span>,<span class="dv">55662</span>,<span class="dv">10815</span>,<span class="dv">83186</span>,<span class="dv">31523</span>,<span class="dv">92736</span>,<span class="dv">28819</span>,<span class="dv">67318</span>,<span class="dv">16371</span>))<span class="sc">|&gt;</span></span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="sc">!</span>(name <span class="sc">%in%</span> suspect_list<span class="sc">$</span>name))<span class="sc">|&gt;</span> <span class="co">#skip duplicates</span></span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">description =</span> <span class="st">"@ gym 01/09"</span>))</span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a><span class="co">#Jermey Bowers was also at the gym  on January 9th add to his discription on the suspect list</span></span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>suspect_list <span class="ot">&lt;-</span> suspect_list <span class="sc">|&gt;</span></span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">description =</span> <span class="fu">if_else</span>(id <span class="sc">==</span> <span class="dv">67318</span>, <span class="st">"witness IDed x2"</span>, description))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>suspect_list</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 2 × 4
-  person_id event_id event_name                 date
-      &lt;dbl&gt;    &lt;dbl&gt; &lt;chr&gt;                     &lt;dbl&gt;
-1     14887     4719 The Funky Grooves Tour 20180115
-2     16371     4719 The Funky Grooves Tour 20180115</code></pre>
+<pre><code># A tibble: 11 × 7
+      id name   license_id address_number address_street_name    ssn description
+   &lt;dbl&gt; &lt;chr&gt;       &lt;dbl&gt;          &lt;dbl&gt; &lt;chr&gt;                &lt;dbl&gt; &lt;chr&gt;      
+ 1 14887 Morty…     118009           4919 Northwestern Dr     1.12e8 witness    
+ 2 16371 Annab…     490173            103 Franklin Ave        3.19e8 witness    
+ 3 67318 Jerem…     423327            530 Washington Pl, Apt… 8.72e8 witness ID…
+ 4 10815 Adria…     952073            948 Emba Ave            2.44e8 @ gym 01/09
+ 5 15247 Shond…     108978           2906 Chuck Dr            4.92e8 @ gym 01/09
+ 6 28073 Zacka…     402017           3823 S Winthrop Ave      3.68e8 @ gym 01/09
+ 7 28819 Joe G…     173289            111 Fisk Rd             1.39e8 @ gym 01/09
+ 8 31523 Bloss…     737886           1245 Ruxshire St         7.54e8 @ gym 01/09
+ 9 55662 Sarit…     556026           1031 Legacy Pointe Blvd  5.65e8 @ gym 01/09
+10 83186 Burto…     915564            484 Lemcrow Way         4.26e8 @ gym 01/09
+11 92736 Carme…     890722           2965 Kilmaine Circle     6.22e8 @ gym 01/09</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co">#both individuals who ran out </span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>get_fit_now_check_in<span class="sc">|&gt;</span></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(membership_id <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">'48Z7A'</span>, <span class="st">'48Z55'</span>) <span class="sc">&amp;</span> </span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>           check_in_date <span class="sc">==</span><span class="st">'20180109'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="add-suspects-facebook-events-on-the-15th-to-the-suspect-list" class="level2">
+<h2 class="anchored" data-anchor-id="add-suspects-facebook-events-on-the-15th-to-the-suspect-list">Add suspect’s facebook events on the 15th to the suspect list</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co">#rename the id variable so are able to join </span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>suspect_list <span class="ot">&lt;-</span> <span class="fu">rename</span>(suspect_list, <span class="at">person_id =</span> id)</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="co">#find teh events our subjects attended on the 15th</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>suspect_list <span class="ot">&lt;-</span> suspect_list<span class="sc">|&gt;</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(facebook_event_checkin<span class="sc">|&gt;</span> </span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>              <span class="fu">filter</span>(date <span class="sc">==</span> <span class="st">'20180115'</span>),</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>            <span class="at">by =</span> <span class="st">"person_id"</span>)<span class="sc">|&gt;</span> <span class="co"># person_ids that had no event listed for the 15th apear as NA's </span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>address_number, <span class="sc">-</span>address_street_name, <span class="sc">-</span>event_id, <span class="sc">-</span>ssn)<span class="co">#get rid of variables uneeded</span></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>suspect_list</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 2 × 4
-  membership_id check_in_date check_in_time check_out_time
-  &lt;chr&gt;                 &lt;dbl&gt;         &lt;dbl&gt;          &lt;dbl&gt;
-1 48Z7A              20180109          1600           1730
-2 48Z55              20180109          1530           1700</code></pre>
+<pre><code># A tibble: 11 × 6
+   person_id name              license_id description     event_name        date
+       &lt;dbl&gt; &lt;chr&gt;                  &lt;dbl&gt; &lt;chr&gt;           &lt;chr&gt;            &lt;dbl&gt;
+ 1     14887 Morty Schapiro        118009 witness         The Funky Gro…  2.02e7
+ 2     16371 Annabel Miller        490173 witness         The Funky Gro…  2.02e7
+ 3     67318 Jeremy Bowers         423327 witness IDed x2 The Funky Gro…  2.02e7
+ 4     10815 Adriane Pelligra      952073 @ gym 01/09     &lt;NA&gt;           NA     
+ 5     15247 Shondra Ledlow        108978 @ gym 01/09     &lt;NA&gt;           NA     
+ 6     28073 Zackary Cabotage      402017 @ gym 01/09     &lt;NA&gt;           NA     
+ 7     28819 Joe Germuska          173289 @ gym 01/09     &lt;NA&gt;           NA     
+ 8     31523 Blossom Crescenzo     737886 @ gym 01/09     &lt;NA&gt;           NA     
+ 9     55662 Sarita Bartosh        556026 @ gym 01/09     &lt;NA&gt;           NA     
+10     83186 Burton Grippe         915564 @ gym 01/09     &lt;NA&gt;           NA     
+11     92736 Carmen Dimick         890722 @ gym 01/09     &lt;NA&gt;           NA     </code></pre>
 </div>
 </div>
+<blockquote class="blockquote">
+<p>Since Jeremy Bowers is the only suspect that meets the description given by both witnesses and was at the same event as them on the same date he is the most likely murderer.</p>
+</blockquote>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -276,10 +341,9 @@ And the final suspect is…
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p><em>put the name of the person responsible for the murder here.</em></p>
+<p><em>Jeremy Bowers</em></p>
 </div>
 </div>
-</section>
 </section>
 </section>
 
