@@ -1,25 +1,27 @@
 ---
-title: 'Lab 2: Simple Linear Regression'
-output:
-  Html_document:  # output type “word_document:”
-    number_sections: true
-author: “”
-date: "put the date"
+title: "Lab 7: SQL Murder - Data types"
+author: "Karla Buitrago-Yepes"
+format: html
+editor: source
+markdown:
 execute: 
+  echo: true
 ---
 
-For this lab, you will be joining and filtering related data sets to solve a murder mystery!
+For this lab, you will be joining and filtering related data sets to
+solve a murder mystery!
 
 # Part 1: GitHub Workflow
 
-At the top of the document (in the YAML) there is an `author` line that says 
-`"Your name here!"`. Change this to be your name and save your file either by
-clicking on the blue floppy disk or with a shortcut (command / control + s). 
+At the top of the document (in the YAML) there is an `author` line that
+says `"Your name here!"`. Change this to be your name and save your file
+either by clicking on the blue floppy disk or with a shortcut (command /
+control + s).
 
-Be sure to [commit the files to your repo](https://happygitwithr.com/existing-github-first#stage-and-commit). 
+Be sure to [commit the files to your
+repo](https://happygitwithr.com/existing-github-first#stage-and-commit).
 
 Let's get started!
-
 
 # Part 2: Some Words of Advice
 
@@ -27,8 +29,8 @@ Let's get started!
 
 -   Make sure you don't print out more output than you need.
 
--   Make sure you don't assign more objects than necessary---avoid "object junk"
-in your environment.
+-   Make sure you don't assign more objects than necessary---avoid
+    "object junk" in your environment.
 
 -   Make your code readable and nicely formatted.
 
@@ -36,18 +38,20 @@ in your environment.
 
 # Part 3: Finding the Killer
 
-Northwestern University's Knight Lab wanted to help sharpen users' database
-skills, so they created a murder mystery. Can you solve this crime in SQL City??
+Northwestern University's Knight Lab wanted to help sharpen users'
+database skills, so they created a murder mystery. Can you solve this
+crime in SQL City??
 
-The relational data you will be working with contains tables with different
-pieces of information pertinent to the crime - people, social media check-ins,
-driver's licenses, crime scene reports, police interviews, and more!
-
+The relational data you will be working with contains tables with
+different pieces of information pertinent to the crime - people, social
+media check-ins, driver's licenses, crime scene reports, police
+interviews, and more!
 
 ## Access the Data
 
-This code chunk will read in **all** of the tables of data for you. Don't modify or
-remove this! Take some time to look at each file type so that 
+This code chunk will read in **all** of the tables of data for you.
+Don't modify or remove this! Take some time to look at each file type so
+that
 
 ```{r}
 #| message: false
@@ -68,34 +72,109 @@ source("https://raw.githubusercontent.com/jcanner/stat_210_2025_website/main/lab
 
 Detective Wickham reaches out to you...
 
-> A crime has taken place and I need your help! There was a murder in SQL City sometime on January 15, 2018. Could you retrieve the crime scene report from the police department’s database and follow the clues to find the person responsible for the murder?!
+> A crime has taken place and I need your help! There was a murder in
+> SQL City sometime on January 15, 2018. Could you retrieve the crime
+> scene report from the police department’s database and follow the
+> clues to find the person responsible for the murder?!
 
-
-**Step 1: Find the police report in `crime_scene_report`. Then used the information in the report to move on to the next data source based on the information learned.**
+**Step 1: Find the police report in `crime_scene_report`. Then used the
+information in the report to move on to the next data source based on
+the information learned.**
 
 ```{r}
-# Code for looking at the relevant crime scene report.
+#| label: relevant crime scene report
 
+crime_scene_report |>
+  filter(date == '20180115'& #on January 15, 2018
+           type == "murder" & #a murder
+           city == "SQL City")|>#in SQL City
+  pull(description)#pull to see what the report say for valuable information
 
 ```
 
+**Next Steps: Follow the evidence to the person responsible for the
+murder, building a report as you go.** There are accomplices, some
+knowingly and some unknowingly, but there is only one mastermind.
+
+Solve the murder mystery, showing **all of your work in this document**.
+Your document and code must be well organized, easy to follow, and
+reproducible.
+
+-   Use headers and written descriptions to indicate what you are doing.
+-   Use `dplyr` verbs and `join` functions rather than just looking
+    through the tables manually. Functions from `stringr` and
+    `lubridate` will also be useful.
+-   Use good code formatting practices.
+-   Comment your code.
+-   Cite any external sources you use to solve the mystery. \>cheat
+    sheets
+
+### Security Footage Witness Information
+```{r}
+#| label: information on witnesses 
+
+#the last house on \"Northwestern Dr\
+
+suspect_list <- bind_rows(
+  person |>
+    filter(address_street_name == "Northwestern Dr")|>#all the rows showing the Northwestern Dr street
+    arrange(desc(address_number))|>#go from largest to smallest adress number for the "last house on the street"
+    slice_head()|>
+    mutate(description = "witness"),
+  person|>
+    filter(str_extract(name, "^[^ ]+") == "Annabel", 
+           address_street_name == "Franklin Ave")|>
+    mutate(description = "witness")
+)
+
+suspect_list
+```
+
+I found the syntax for [extracting after the fist
+name](https://stackoverflow.com/questions/26489276/separate-name-into-firstname-and-lastname-columns-of-data-frame)
+
+### What did Witnesses say during the Police Interviews
+
+```{r}
+#| label: police interviews
+interview|>
+  filter(person_id %in% c(14887, 16371))|>
+  pull(transcript)
+```
+### Who fits Police interview Descriptions
+
+```{r}
+# Morty's(14887) suspect description
+
+#get fit members matching witness descriptions of who ran out 
+filter(get_fit_now_member,str_starts(id, "48Z") & membership_status == "gold")
+
+#who has a license with H42W
+filter(drivers_license,str_detect(plate_number, "H42W"))
+
+#whose license matches the owners of the car that was seen 
+filter(person, license_id %in% c(183779,423327,664760))
+
+# person described having run out was Jeremy Bowers added to suspect_list
+suspect_list <- bind_rows(
+  suspect_list,
+  person |> filter(id == 67318)|>
+  mutate(description = "witness ID"))
 
 
+# was Morty (14887) at the gym Facebook events on '20180115'aka January 15, 2018, and gym check in
 
-**Next Steps: Follow the evidence to the person responsible for the murder, building a report as you go.**
-There are accomplices, some knowingly and some unknowingly, but there is only one mastermind.
+#where were witnesses on 
+facebook_event_checkin|>
+  filter(person_id %in% c(14887, 16371))
+
+#both individuals who ran out 
+get_fit_now_check_in|>
+  filter(membership_id %in% c('48Z7A', '48Z55') & 
+           check_in_date =='20180109')
 
 
-Solve the murder mystery, showing **all of your work in this document**. Your
-document and code must be well organized, easy to follow, and reproducible.
-
-+ Use headers and written descriptions to indicate what you are doing.
-+ Use `dplyr` verbs and `join` functions rather than just looking through the
-tables manually. Functions from `stringr` and `lubridate` will also be useful.
-+ Use good code formatting practices.
-+ Comment your code.
-+ Cite any external sources you use to solve the mystery.
-
+```
 
 
 ::: callout-note
